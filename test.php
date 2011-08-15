@@ -8,7 +8,8 @@ $objects=array(
 
 $x_min="1824650";
 $y_min="6141550";
-$zoom=25; // per char
+$zoom_x=25; // per char
+$zoom_y=50;
 
 function parse_wkt($wkt) {
   if(preg_match("/^LINESTRING\((.*)\)$/", $wkt, $m)) {
@@ -23,12 +24,12 @@ function parse_wkt($wkt) {
 }
 
 function zoom_geo($points) {
-  global $x_min, $y_min, $zoom;
+  global $x_min, $y_min, $zoom_x, $zoom_y;
   $ret=array();
 
   foreach($points as $p) {
-    $x=($p[0]-$x_min)/$zoom;
-    $y=($p[1]-$y_min)/$zoom;
+    $x=($p[0]-$x_min)/$zoom_x;
+    $y=($p[1]-$y_min)/$zoom_y;
     $ret[]=array($x, $y);
   }
 
