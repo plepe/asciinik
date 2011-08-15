@@ -18,5 +18,65 @@ function parse_wkt($wkt) {
   return $points;
 }
 
+function zoom_geo($points) {
+  global $x_min, $y_min, $zoom;
+  $ret=array();
+
+  foreach($points as $p) {
+    $x=($p[0]-$x_min)/$zoom;
+    $y=($p[1]-$y_min)/$zoom;
+    $ret[]=array($x, $y);
+  }
+
+  return $ret;
+}
+
+function print_geo($matrix, $points) {
+  foreach($points as $poi) {
+    $x=round($poi[0]);
+    $y=round($poi[1]);
+
+    $matrix[$y][$x]="*";
+  }
+}
+
+function print_matrix($matrix) {
+  $matrix_y=array_keys($matrix);
+  $y1=min($matrix_y);
+  $y2=max($matrix_y);
+  if($y1<0) $y1=0;
+  if($y2>20) $y2=20;
+
+  for($y=$y1; $y<=$y2; $y++) {
+    if(!isset($matrix[$y])) {
+      print "\n";
+      continue;
+    }
+
+    $matrix_x=array_keys($matrix[$y]);
+    sort($matrix_x);
+
+    $x1=min($matrix_x);
+    $x2=max($matrix_x);
+    if($x1<0) $x1=0;
+    if($x2>79) $x2=79;
+    print str_repeat(" ", $x1);
+    for($x=$x1; $x<=$x2; $x++) {
+      if(isset($matrix[$y])&&isset($matrix[$y][$x])) {
+	print "{$matrix[$y][$x]}";
+      }
+      else {
+	print "+";
+      }
+    }
+
+    print "\n";
+  }
+}
+
 $geo=parse_wkt($wkt);
-print_r($geo);
+$geo=zoom_geo($geo);
+$matrix=array();
+print_geo(&$matrix, $geo);
+
+print_matrix($matrix);
